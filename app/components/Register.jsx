@@ -3,12 +3,41 @@ import { useState } from "react";
 export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
   const [isPassVisible, setPassVisible] = useState(false);
   const [isCnfmPassVisible, setCnfmPassVisible] = useState(false);
+  const [username, setUsername] = useState("");
+  const [isusernameValid, setUsernameValidity] = useState(true);
+
+  const handleCheckingUser = async () => {
+    if (username) {
+      try {
+        const response = await fetch("/api/check-username-availability", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: username }),
+        });
+        const data = await response.json();
+
+        setUsernameValidity(data.eligible);
+        console.log(`setUsernameValidity to ${data.eligible}`);
+      } catch (error) {
+        console.log(
+          "this error happen during fetching from check-username availablitiy",
+          error
+        );
+      }
+    }
+  };
   return (
     <div className="m-auto  w-[90%] h-[600px] mt-[8vh] sm:w-[60%] max-w-[500px] justify-center rounded md:w-[50%] lg:w-[40%] 2xl:[20%] flex flex-col border-solid  border-gray-300 bg-white/10  border-[2px] box-border  items-center">
       <h1 className="text-4xl  mb-[6%] " id="company-name">
         Company Name
       </h1>
-      <form className="flex flex-col items-center w-[70%] sm:w-[60%] my-2  mx-auto">
+      <form
+        action="/register"
+        method="POST"
+        className="flex flex-col items-center w-[70%] sm:w-[60%] my-2  mx-auto"
+      >
         <label htmlFor="emailAddress">
           Email address
           <div className="rounded relative w-[296px]  [2px] my-1 focus-within:bg-white p-2 flex bg-gray-100 items-center">
@@ -19,6 +48,8 @@ export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
               placeholder="Email address"
               name="emailAddress"
               id="emailAddress"
+              pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+              title="Please enter a valid Email"
               required
               autoComplete="off"
             />
@@ -26,7 +57,9 @@ export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
         </label>
         <label htmlFor="userName">
           Username
-          <div className="rounded relative w-[296px]  [2px] my-1 focus-within:bg-white p-2 flex bg-gray-100 items-center">
+          <div
+            className={`rounded relative w-[296px]  [2px] my-1 focus-within:bg-white p-2 flex bg-gray-100 items-center`}
+          >
             <span>&#128100;</span>
             <input
               type="text"
@@ -34,9 +67,20 @@ export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
               placeholder="Create username"
               name="username"
               id="userName"
+              title="Enter a username for your Profile"
               autoComplete="off"
+              required
+              onChange={(e) => {
+                setUsername(e.target.value);
+              }}
             />
-            <span className="text-teal-600 cursor-pointer "> CHECK</span>
+            <span
+              className="text-teal-600 cursor-pointer "
+              onClick={handleCheckingUser}
+            >
+              {" "}
+              CHECK
+            </span>
           </div>
         </label>
 
@@ -50,7 +94,10 @@ export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
               placeholder="Password"
               name="password"
               id="password"
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).{8,}"
+              title="Password must contain atleast one Smallcase Letter, one Capitalcase Letter, one unique Symbol, one Number"
               autoComplete="off"
+              required
             />
             <span
               className="cursor-pointer text-teal-600 "
@@ -71,6 +118,9 @@ export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
               name="cnfmPassword"
               id="cnfmPassword"
               autoComplete="off"
+              pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).{8,}"
+              title="Password and Confirm Password must be the same."
+              required
             />
             <span
               className="cursor-pointer text-teal-600 "
@@ -95,6 +145,11 @@ export const Register = ({ isAlreadyUser, setAlreadyUser }) => {
           Login
         </button>
       </div>
+      {isusernameValid ? (
+        <p></p>
+      ) : (
+        <p className="text-red-500">please choose a different Username</p>
+      )}
     </div>
   );
 };
