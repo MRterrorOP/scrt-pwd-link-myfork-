@@ -61,3 +61,41 @@ body {
   left: 50%;
   translate: -9px -5px;
 }
+
+#username-existence-indicator::after {
+  position: absolute;
+  content: "";
+  width: 13px;
+  height: 6px;
+  top: 50%;
+  left: 50%;
+  border: solid white;
+  border-width: 0px 0px 2px 2px;
+  translate: -6px -4px;
+  transform: rotate(-50deg);
+}
+
+#username-existence-indicator-red::after {
+  position: absolute;
+  content: "";
+  width: 13px;
+  height: 1px;
+  top: 42%;
+  left: 50%;
+  border: 1px solid white;
+  background-color: white;
+  translate: -6px 0px;
+  transform: rotate(-45deg);
+}
+#username-existence-indicator-red::before {
+  position: absolute;
+  content: "";
+  width: 13px;
+  height: 1px;
+  top: 42%;
+  left: 50%;
+  border: 1px solid white;
+  border: 1px solid white;
+  translate: -6px 0px;
+  transform: rotate(45deg);
+}
